@@ -20,4 +20,28 @@ const destroy = async (req, res) => {
   }
 };
 
-module.exports = { create, destroy };
+const login = async (req, res) => {
+    try {
+        const {email, password} = req.body;
+        const token = await UserServiceInstance.loginUser({email, password});
+        res.status(200).json({success: true, message: "Successfully logged in", token});
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({success: false});
+    }
+}
+
+const isAuthenticated = async (req, res) => {
+    try {
+        const token = req.headers['x-access-token'];
+        const response = await UserServiceInstance.isAuthenticated(token);
+        return res.status(200).json({success: true, userId: response});
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({success: false});
+    }
+}
+
+module.exports = { create, destroy, login, isAuthenticated };
